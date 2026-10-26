@@ -27,7 +27,7 @@ services:
     name: pulsecare-triage-web
     runtime: node
     plan: free
-    buildCommand: corepack enable && corepack prepare pnpm@12.3.4 --activate && pnpm install --frozen-lockfile && pnpm build
+    buildCommand: corepack enable && corepack prepare pnpm@10.6.5 --activate && pnpm install --frozen-lockfile && pnpm build
     startCommand: pnpm start
     envVars:
       - key: NODE_VERSION
