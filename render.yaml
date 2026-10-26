@@ -19,10 +19,7 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: FRONTEND_ORIGIN
-        fromService:
-          type: web
-          name: pulsecare-triage-web
-          property: host
+        value: https://pulsecare-triage-web.onrender.com
   - type: web
     name: pulsecare-triage-web
     runtime: node
@@ -33,10 +30,7 @@ services:
       - key: NODE_VERSION
         value: 22.14.0
       - key: NEXT_PUBLIC_API_BASE_URL
-        fromService:
-          type: web
-          name: pulsecare-triage-api
-          property: host
+        value: https://pulsecare-triage-api.onrender.com
 
 databases:
   - name: pulsecare-triage-db
