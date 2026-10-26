@@ -5,11 +5,21 @@ os.environ["DATABASE_URL"] = "sqlite:///./test_pulsecare.db"
 import pytest
 from fastapi.testclient import TestClient
 
-from database import Base, SessionLocal, engine
+from database import Base, SessionLocal, engine, normalize_database_url
 from main import app, passwords
 from models import Resource, User
 
 client = TestClient(app)
+
+
+def test_postgres_database_urls_use_psycopg_driver():
+    assert normalize_database_url(
+        "postgres://user:pass@host:5432/pulsecare"
+    ) == "postgresql+psycopg://user:pass@host:5432/pulsecare"
+    assert normalize_database_url(
+        "postgresql://user:pass@host:5432/pulsecare"
+    ) == "postgresql+psycopg://user:pass@host:5432/pulsecare"
+    assert normalize_database_url("sqlite:///./pulsecare.db") == "sqlite:///./pulsecare.db"
 
 
 @pytest.fixture(autouse=True)

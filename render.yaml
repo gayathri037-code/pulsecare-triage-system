@@ -1,0 +1,46 @@
+services:
+  - type: web
+    name: pulsecare-triage-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: python seed.py && uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: ENVIRONMENT
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: pulsecare-triage-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_ORIGIN
+        fromService:
+          type: web
+          name: pulsecare-triage-web
+          property: host
+  - type: web
+    name: pulsecare-triage-web
+    runtime: node
+    plan: free
+    buildCommand: corepack enable && corepack prepare pnpm@12.3.4 --activate && pnpm install --frozen-lockfile && pnpm build
+    startCommand: pnpm start
+    envVars:
+      - key: NODE_VERSION
+        value: 22.14.0
+      - key: NEXT_PUBLIC_API_BASE_URL
+        fromService:
+          type: web
+          name: pulsecare-triage-api
+          property: host
+
+databases:
+  - name: pulsecare-triage-db
+    databaseName: pulsecare
+    user: pulsecare
+    plan: free
+    postgresMajorVersion: "16"

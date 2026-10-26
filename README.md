@@ -75,4 +75,10 @@ The backend tests use a disposable local SQLite test database. The frontend buil
 
 ## Deployment notes
 
-Build the frontend with its public API URL and deploy the FastAPI backend separately with a managed PostgreSQL database. Configure `ENVIRONMENT=production`, the backend's `DATABASE_URL`, a unique `JWT_SECRET` (at least 32 characters), and the exact frontend origin in the hosting environment; startup refuses production mode without these settings. The demo seed is for local development only; do not run it against production data. Use HTTPS, rotate any demo credentials, and complete security, privacy, accessibility, and clinical/regulatory review before any real-world use.
+### Render public demo
+
+This repository includes a `render.yaml` Blueprint for a public demo: a Next.js web service, a FastAPI service, and PostgreSQL. To deploy it, sign in to Render using GitHub, create a **New Blueprint Instance**, select this public GitHub repository, review the three free services, and apply the Blueprint. Render generates the API JWT secret and wires the database and frontend/backend origins together. Wait for both web services to finish deploying; then open the `pulsecare-triage-web` service URL. Verify `/health` on the API service and sign in with the local fictional demo account above.
+
+The Blueprint intentionally seeds only fictional demo records so the public sign-in works. Anyone with the demo credentials can change this demo database; never use real patient information. Free web services can sleep when idle, and Render's free PostgreSQL plan has limited retention/expiry; back up the database or select a paid persistent database plan before relying on it. Free services are for demonstration and do not have production availability guarantees.
+
+For an independently managed deployment, set `ENVIRONMENT=production`, the backend's `DATABASE_URL` to PostgreSQL, a unique `JWT_SECRET` (at least 32 characters), and the exact frontend origin in the hosting environment. Startup refuses production mode without these settings. Use HTTPS, rotate any demo credentials, and complete security, privacy, accessibility, and clinical/regulatory review before any real-world use.

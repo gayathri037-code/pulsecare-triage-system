@@ -1,4 +1,7 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8000'
+const configuredApiBase = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8000'
+const API_BASE = configuredApiBase.startsWith('http')
+  ? configuredApiBase
+  : `https://${configuredApiBase}`
 const TOKEN_KEY = 'pulsecare_token'
 
 export class ApiError extends Error {

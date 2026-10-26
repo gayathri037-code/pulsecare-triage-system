@@ -38,6 +38,10 @@ frontend_origins = [
     ).split(",")
     if origin.strip()
 ]
+frontend_origins = [
+    origin if "://" in origin else f"https://{origin}"
+    for origin in frontend_origins
+]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=frontend_origins,
