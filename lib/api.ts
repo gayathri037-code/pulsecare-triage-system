@@ -75,3 +75,35 @@ export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
 
   return body as T
 }
+
+export async function downloadFile(path: string, filename: string): Promise<void> {
+  const headers = new Headers()
+  const token =
+    typeof window !== 'undefined'
+      ? window.sessionStorage.getItem(TOKEN_KEY)
+      : null
+  if (token) headers.set('Authorization', `Bearer ${token}`)
+
+  let response: Response
+  try {
+    response = await fetch(`${API_BASE}${path}`, { headers, cache: 'no-store' })
+  } catch {
+    throw new ApiError(0, 'The PulseCare API is unavailable. Check that it is running and try again.')
+  }
+  if (!response.ok) {
+    const body = await response.json().catch(() => null) as { detail?: unknown } | null
+    throw new ApiError(
+      response.status,
+      typeof body?.detail === 'string' ? body.detail : 'The download could not be completed.',
+    )
+  }
+
+  const url = URL.createObjectURL(await response.blob())
+  const anchor = document.createElement('a')
+  anchor.href = url
+  anchor.download = filename
+  document.body.appendChild(anchor)
+  anchor.click()
+  anchor.remove()
+  URL.revokeObjectURL(url)
+}
